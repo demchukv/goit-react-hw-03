@@ -10,7 +10,11 @@ function App() {
   const [ contacts, setContacts ] = useState(() => {
     const savedContacts = window.localStorage.getItem("contacts-list");
     if (savedContacts !== null) {
-      return JSON.parse(savedContacts);
+      try{
+        return JSON.parse(savedContacts);
+      }catch{
+        console.log("Error occured! Data removed!");
+      }
     }
     return initData;
   });
@@ -22,13 +26,13 @@ function App() {
     }, [contacts]
   )
 
-  const addNewContact = values => {
+  const onAddContact = values => {
     setContacts((prevContacts) => {
       return [...prevContacts, values];
     });
   }
 
-  const deleteContact = (contactID) => {
+  const onDeleteContact = (contactID) => {
     setContacts((prevContacts) => {
       return prevContacts.filter(({id}) => id !== contactID);
     })
@@ -39,9 +43,9 @@ function App() {
   return (
     <>
       <h1>Phonebook</h1>
-      <ContactForm onAddContact={addNewContact} />
+      <ContactForm onAddContact={onAddContact} />
       <SearchBox filterValue={filterValue} setFilter={setFilter} />
-      <ContactList items={filteredContacts} onDelete={deleteContact} />
+      <ContactList contacts={filteredContacts} onDeleteContact={onDeleteContact} />
     </>
   )
 }
